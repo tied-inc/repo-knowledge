@@ -1,5 +1,17 @@
 import * as core from '@actions/core'
-import { wait } from './wait.js'
+import z from 'zod'
+
+const schema = z.object({
+  method: z.enum(['collect'])
+})
+type Input = z.infer<typeof schema>
+
+const dispatchAction = (input: Input) => {
+  switch (input.method) {
+    case 'collect':
+      break
+  }
+}
 
 /**
  * The main function for the action.
@@ -8,20 +20,17 @@ import { wait } from './wait.js'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    core.debug('Starting action')
+    const input = schema.parse({
+      method: core.getInput('method')
+    })
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    dispatchAction(input)
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.debug('Action completed')
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    console.error(error)
+    if (error instanceof Error) core.setFailed('Action failed')
   }
 }
