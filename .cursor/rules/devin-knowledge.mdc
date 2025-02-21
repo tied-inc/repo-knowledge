@@ -1,0 +1,134 @@
+---
+description: Devin の実装パターンとベストプラクティス
+globs: */**/github.ts;*/**/interface.ts
+---
+
+# Devin Implementation Patterns and Best Practices
+
+## Type Definition Strategy
+
+### Generic Interface Design
+- 汎用的なインターフェースは最小限の必要なフィールドのみを含める
+- プロバイダー固有の実装詳細は個別のファイルに分離する
+- 日付関連のフィールドは一貫した命名規則を使用する（例：createdAt, updatedAt）
+
+```typescript
+// 良い例：最小限の汎用インターフェース
+interface Deployment {
+  provider: string
+  environment: string
+  sha: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 避けるべき例：実装固有の詳細を含むインターフェース
+interface Deployment {
+  id: number          // 実装固有
+  ref: string         // 実装固有
+  creator: {          // 実装固有
+    login: string
+    id: number
+  }
+  // ...
+}
+```
+
+### Provider-Specific Types
+- プロバイダー固有の型は実装ファイルに配置
+- 外部APIの型定義を活用（例：@octokit/openapi-types）
+- 型変換は実装内で明示的に行う
+
+```typescript
+// github.ts
+import type { components } from '@octokit/openapi-types'
+
+type GitHubDeployment = components['schemas']['deployment']
+type GitHubDeploymentStatus = components['schemas']['deployment-status']
+```
+
+## Implementation Patterns
+
+### Closure Pattern
+- クラスの代わりにクロージャーパターンを使用
+- プライベートな状態をスコープ内に閉じ込める
+- 必要な関数のみを公開
+
+```typescript
+export const createGitHubVCSProvider = (token?: string): VCSProvider => {
+  // プライベートな状態
+  const octokit = new Octokit({ auth: token })
+
+  // 公開する関数
+  return {
+    getDeployments,
+    getDeploymentStatus
+  }
+}
+```
+
+### Type Safety
+- 型アサーションは慎重に使用
+- unknown から具体的な型への変換を段階的に行う
+- API レスポンスの型を明示的に定義
+
+## Testing Strategy
+
+### E2E Tests
+- 実際のAPIを使用したテスト
+- CI環境での権限設定が重要
+- テストケースは存在しないデータも考慮
+
+```typescript
+it('should fetch deployment with correct properties when exists', async () => {
+  const deployments = await provider.getDeployments(owner, repo)
+  if (!deployments.length) {
+    return
+  }
+  const deployment = deployments[0]
+  expect(deployment.provider).toBe('github')
+  expect(deployment.environment).toBeDefined()
+  // ...
+})
+```
+
+## CI/CD Configuration
+
+### GitHub Actions
+- 必要な権限を明示的に設定
+```yaml
+permissions:
+  contents: read
+  deployments: read
+```
+
+### Error Handling
+- API エラーは適切に処理
+- 型安全性を維持しながらエラーハンドリング
+- デバッグ情報を適切に提供
+
+## Best Practices
+
+1. インターフェース設計
+   - 最小限の必要なフィールドのみを含める
+   - プロバイダー固有の実装は分離する
+   - 一貫した命名規則を使用する
+
+2. 型安全性
+   - 明示的な型定義を使用
+   - 型アサーションは最小限に抑える
+   - API型定義を活用する
+
+3. テスト
+   - 実際のAPIを使用したE2Eテスト
+   - エッジケースのテスト
+   - CI環境での権限設定
+
+4. エラーハンドリング
+   - 適切なエラー型の定義
+   - デバッグ情報の提供
+   - 型安全性の維持
+
+## References
+- [GitHub Deployment API](https://docs.github.com/ja/rest/deployments)
+- [Octokit Types](https://github.com/octokit/openapi-types.ts)
