@@ -1,33 +1,17 @@
-// GitHub Deployment data types
-export interface GitHubDeployment {
-  id: number
-  sha: string
-  ref: string
-  task: string
+// Generic VCS interfaces
+export interface Deployment {
+  provider: string
   environment: string
-  description: string | null
-  creator: {
-    login: string
-    id: number
-  }
-  created_at: string
-  updated_at: string
-  statuses_url: string
-  repository_url: string
+  sha: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface DeploymentStatus {
-  id: number
-  deployment_id: number
+  deploymentId: string
   state: 'pending' | 'success' | 'failure' | 'error' | 'inactive'
-  creator: {
-    login: string
-    id: number
-  }
-  description: string | null
-  environment: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 // VCS Provider interface
@@ -36,7 +20,7 @@ export interface VCSProvider {
     owner: string,
     repo: string,
     environment?: string
-  ) => Promise<GitHubDeployment[]>
+  ) => Promise<Deployment[]>
   getDeploymentStatus: (
     owner: string,
     repo: string,

@@ -1,9 +1,37 @@
 import { Octokit } from '@octokit/rest'
-import type {
-  VCSProvider,
-  GitHubDeployment,
-  DeploymentStatus
-} from './interface.js'
+import type { VCSProvider, Deployment, DeploymentStatus } from './interface.js'
+
+// GitHub-specific types
+interface GitHubDeployment {
+  id: number
+  sha: string
+  ref: string
+  task: string
+  environment: string
+  description: string | null
+  creator: {
+    login: string
+    id: number
+  }
+  created_at: string
+  updated_at: string
+  statuses_url: string
+  repository_url: string
+}
+
+interface GitHubDeploymentStatus {
+  id: number
+  deployment_id: number
+  state: DeploymentStatus['state']
+  creator: {
+    login: string
+    id: number
+  }
+  description: string | null
+  environment: string
+  created_at: string
+  updated_at: string
+}
 
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   const octokit = new Octokit({ auth: token })
@@ -12,7 +40,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
     owner: string,
     repo: string,
     environment?: string
-  ): Promise<GitHubDeployment[]> => {
+  ): Promise<Deployment[]> => {
     const params = {
       owner,
       repo,
@@ -21,20 +49,11 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
 
     const { data } = await octokit.repos.listDeployments(params)
     return data.map((d) => ({
-      id: d.id,
-      sha: d.sha,
-      ref: d.ref,
-      task: d.task,
+      provider: 'github',
       environment: d.environment,
-      description: d.description,
-      creator: {
-        login: d.creator?.login || '',
-        id: d.creator?.id || 0
-      },
-      created_at: d.created_at,
-      updated_at: d.updated_at,
-      statuses_url: d.statuses_url,
-      repository_url: d.repository_url
+      sha: d.sha,
+      createdAt: d.created_at,
+      updatedAt: d.updated_at
     }))
   }
 
@@ -49,17 +68,10 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
       deployment_id
     })
     return data.map((s) => ({
-      id: s.id,
-      deployment_id,
+      deploymentId: deployment_id.toString(),
       state: s.state as DeploymentStatus['state'],
-      creator: {
-        login: s.creator?.login || '',
-        id: s.creator?.id || 0
-      },
-      description: s.description || null,
-      environment: s.environment || '',
-      created_at: s.created_at,
-      updated_at: s.updated_at
+      createdAt: s.created_at,
+      updatedAt: s.updated_at
     }))
   }
 
