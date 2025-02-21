@@ -1,3 +1,8 @@
+---
+description: GitHub Deployment API に関する情報と実装方法
+globs: */**/github.ts
+---
+
 # GitHub Deployment Data Retrieval
 
 This document describes the implementation of GitHub deployment data retrieval
