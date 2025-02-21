@@ -33,7 +33,7 @@ describe('GitHub VCS Provider', () => {
     const statuses = await provider.getDeploymentStatus(
       owner,
       repo,
-      (deployments[0] as any).id
+      (deployments[0] as unknown as { id: number }).id
     )
     expect(Array.isArray(statuses)).toBe(true)
   })
@@ -47,7 +47,7 @@ describe('GitHub VCS Provider', () => {
     const statuses = await provider.getDeploymentStatus(
       owner,
       repo,
-      (deployments[0] as any).id
+      (deployments[0] as unknown as { id: number }).id
     )
     // Skip test if no statuses exist
     if (!statuses.length) {
