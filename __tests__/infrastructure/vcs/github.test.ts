@@ -17,9 +17,11 @@ describe('GitHub VCS Provider', () => {
       return
     }
     const deployment = deployments[0]
-    expect(deployment).toHaveProperty('id')
-    expect(deployment).toHaveProperty('sha')
-    expect(deployment).toHaveProperty('environment')
+    expect(deployment.provider).toBe('github')
+    expect(deployment.environment).toBeDefined()
+    expect(deployment.sha).toBeDefined()
+    expect(deployment.createdAt).toBeDefined()
+    expect(deployment.updatedAt).toBeDefined()
   })
 
   it('should fetch deployment statuses array', async () => {
@@ -31,7 +33,7 @@ describe('GitHub VCS Provider', () => {
     const statuses = await provider.getDeploymentStatus(
       owner,
       repo,
-      deployments[0].id
+      (deployments[0] as any).id
     )
     expect(Array.isArray(statuses)).toBe(true)
   })
@@ -45,15 +47,16 @@ describe('GitHub VCS Provider', () => {
     const statuses = await provider.getDeploymentStatus(
       owner,
       repo,
-      deployments[0].id
+      (deployments[0] as any).id
     )
     // Skip test if no statuses exist
     if (!statuses.length) {
       return
     }
     const status = statuses[0]
-    expect(status).toHaveProperty('id')
-    expect(status).toHaveProperty('state')
-    expect(status).toHaveProperty('environment')
+    expect(status.deploymentId).toBeDefined()
+    expect(status.state).toBeDefined()
+    expect(status.createdAt).toBeDefined()
+    expect(status.updatedAt).toBeDefined()
   })
 })

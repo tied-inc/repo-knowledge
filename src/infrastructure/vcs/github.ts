@@ -20,7 +20,8 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
     }
 
     const { data } = await octokit.repos.listDeployments(params)
-    return data.map((d) => ({
+    const githubDeployments = data as GitHubDeployment[]
+    return githubDeployments.map((d) => ({
       provider: 'github',
       environment: d.environment,
       sha: d.sha,
