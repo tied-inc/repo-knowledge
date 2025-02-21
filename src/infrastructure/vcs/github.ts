@@ -1,13 +1,9 @@
 import { Octokit } from '@octokit/rest'
-import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods'
 import type {
   VCSProvider,
   GitHubDeployment,
   DeploymentStatus
 } from './interface.js'
-
-// Let TypeScript infer the types from Octokit's response
-type OctokitResponse<T> = T extends Array<infer U> ? U : never
 
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   const octokit = new Octokit({ auth: token })
