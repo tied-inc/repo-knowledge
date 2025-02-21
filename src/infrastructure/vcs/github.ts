@@ -6,8 +6,8 @@ import type {
   DeploymentStatus
 } from './interface.js'
 
-type OctokitDeployment = RestEndpointMethodTypes['repos']['listDeployments']['response']['data'][0]
-type OctokitDeploymentStatus = RestEndpointMethodTypes['repos']['listDeploymentStatuses']['response']['data'][0]
+// Let TypeScript infer the types from Octokit's response
+type OctokitResponse<T> = T extends Array<infer U> ? U : never
 
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   const octokit = new Octokit({ auth: token })
@@ -24,7 +24,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
     }
 
     const { data } = await octokit.repos.listDeployments(params)
-    return data.map((d: OctokitDeployment) => ({
+    return data.map(d => ({
       id: d.id,
       sha: d.sha,
       ref: d.ref,
@@ -52,7 +52,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
       repo,
       deployment_id
     })
-    return data.map((s: OctokitDeploymentStatus) => ({
+    return data.map(s => ({
       id: s.id,
       deployment_id,
       state: s.state as DeploymentStatus['state'],
