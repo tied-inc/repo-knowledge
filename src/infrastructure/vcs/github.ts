@@ -40,7 +40,8 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
       repo,
       deployment_id
     })
-    return data.map((s) => ({
+    const githubStatuses = data as GitHubDeploymentStatus[]
+    return githubStatuses.map((s) => ({
       deploymentId: deployment_id.toString(),
       state: s.state as DeploymentStatus['state'],
       createdAt: s.created_at,
