@@ -1,10 +1,13 @@
 # GitHub Deployment Data Retrieval
 
-This document describes the implementation of GitHub deployment data retrieval functionality in the repo-knowledge project.
+This document describes the implementation of GitHub deployment data retrieval
+functionality in the repo-knowledge project.
 
 ## Overview
 
-The implementation provides a way to fetch deployment data from GitHub's API using a functional approach with closures instead of classes. It follows TypeScript best practices with interface-based type definitions.
+The implementation provides a way to fetch deployment data from GitHub's API
+using a functional approach with closures instead of classes. It follows
+TypeScript best practices with interface-based type definitions.
 
 ## Architecture
 
@@ -45,8 +48,16 @@ export interface DeploymentStatus {
 
 // Provider interface for VCS implementations
 export interface VCSProvider {
-  getDeployments: (owner: string, repo: string, environment?: string) => Promise<GitHubDeployment[]>
-  getDeploymentStatus: (owner: string, repo: string, deployment_id: number) => Promise<DeploymentStatus[]>
+  getDeployments: (
+    owner: string,
+    repo: string,
+    environment?: string
+  ) => Promise<GitHubDeployment[]>
+  getDeploymentStatus: (
+    owner: string,
+    repo: string,
+    deployment_id: number
+  ) => Promise<DeploymentStatus[]>
 }
 ```
 
@@ -62,10 +73,10 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   // Public methods
   return {
     getDeployments: async (owner, repo, environment?) => {
-      const { data } = await octokit.repos.listDeployments({ 
-        owner, 
-        repo, 
-        ...(environment ? { environment } : {}) 
+      const { data } = await octokit.repos.listDeployments({
+        owner,
+        repo,
+        ...(environment ? { environment } : {})
       })
       return data.map(/* ... */)
     },
@@ -91,17 +102,24 @@ const provider = createGitHubVCSProvider()
 const deployments = await provider.getDeployments('owner', 'repo')
 
 // Fetch deployment status
-const statuses = await provider.getDeploymentStatus('owner', 'repo', deploymentId)
+const statuses = await provider.getDeploymentStatus(
+  'owner',
+  'repo',
+  deploymentId
+)
 ```
 
 ## Design Decisions
 
 1. **Closure Pattern**: Used instead of classes to:
+
    - Maintain private state (Octokit instance)
    - Provide a functional approach
    - Simplify the public interface
 
-2. **Interface-Based Types**: The project uses TypeScript interfaces for type definitions to:
+2. **Interface-Based Types**: The project uses TypeScript interfaces for type
+   definitions to:
+
    - Ensure consistent data structures
    - Enable easy extension for other VCS providers
    - Provide better type safety and IDE support
@@ -113,8 +131,10 @@ const statuses = await provider.getDeploymentStatus('owner', 'repo', deploymentI
 
 ## Testing
 
-Tests are implemented in `__tests__/infrastructure/vcs/github.test.ts` and run against the actual GitHub API to ensure real-world compatibility.
+Tests are implemented in `__tests__/infrastructure/vcs/github.test.ts` and run
+against the actual GitHub API to ensure real-world compatibility.
 
 ## CI/CD Integration
 
-The implementation includes necessary GitHub Actions permissions (`deployments: read`) to enable deployment data access during CI/CD workflows.
+The implementation includes necessary GitHub Actions permissions
+(`deployments: read`) to enable deployment data access during CI/CD workflows.
