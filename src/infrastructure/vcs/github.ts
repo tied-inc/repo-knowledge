@@ -1,9 +1,13 @@
 import { Octokit } from '@octokit/rest'
+import type { RestEndpointMethodTypes } from '@octokit/plugin-rest-endpoint-methods'
 import type {
   VCSProvider,
   GitHubDeployment,
   DeploymentStatus
 } from './interface.js'
+
+type GitHubDeploymentResponse = RestEndpointMethodTypes['repos']['listDeployments']['response']['data'][0]
+type GitHubDeploymentStatusResponse = RestEndpointMethodTypes['repos']['listDeploymentStatuses']['response']['data'][0]
 
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   const octokit = new Octokit({ auth: token })
@@ -20,7 +24,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
     }
 
     const { data } = await octokit.repos.listDeployments(params)
-    return data.map((d: any) => ({
+    return data.map((d: GitHubDeploymentResponse) => ({
       id: d.id,
       sha: d.sha,
       ref: d.ref,
@@ -48,7 +52,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
       repo,
       deployment_id
     })
-    return data.map((s: any) => ({
+    return data.map((s: GitHubDeploymentStatusResponse) => ({
       id: s.id,
       deployment_id,
       state: s.state as DeploymentStatus['state'],
