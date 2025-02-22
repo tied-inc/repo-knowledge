@@ -66,7 +66,7 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
   // private state
   const octokit = new Octokit({ auth: token })
 
-  // 公開する関数
+  // public functions
   return {
     getDeployments,
     getDeploymentStatus
