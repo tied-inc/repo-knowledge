@@ -31,9 +31,9 @@ interface Deployment {
 
 // Bad example: Interface with implementation-specific details
 interface Deployment {
-  id: number          // 実装固有
-  ref: string         // 実装固有
-  creator: {          // 実装固有
+  id: number          // implementation-specific
+  ref: string         // implementation-specific
+  creator: {          // implementation-specific
     login: string
     id: number
   }
@@ -63,7 +63,7 @@ type GitHubDeploymentStatus = components['schemas']['deployment-status']
 
 ```typescript
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
-  // プライベートな状態
+  // private state
   const octokit = new Octokit({ auth: token })
 
   // 公開する関数
