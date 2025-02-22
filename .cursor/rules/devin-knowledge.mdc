@@ -1,0 +1,141 @@
+---
+description: Implementation patterns and best practices for Devin
+globs: */**/github.ts;*/**/interface.ts
+---
+
+# Documentation Rules
+
+## .cursor/rules Guidelines
+1. When knowledge is updated, developers must update `.cursor/rules` to reflect those changes
+2. If documentation is duplicated, developers must update `.cursor/rules` documents
+3. All `.cursor/rules` documentation must be written in English
+
+# Devin Implementation Patterns and Best Practices
+
+## Type Definition Strategy
+
+### Generic Interface Design
+- Generic interfaces should contain only the minimum required fields
+- Provider-specific implementation details should be separated into individual files
+- Date-related fields should use consistent naming conventions (e.g., createdAt, updatedAt)
+
+```typescript
+// Good example: Minimal generic interface
+interface Deployment {
+  provider: string
+  environment: string
+  sha: string
+  createdAt: string
+  updatedAt: string
+}
+
+// Bad example: Interface with implementation-specific details
+interface Deployment {
+  id: number          // implementation-specific
+  ref: string         // implementation-specific
+  creator: {          // implementation-specific
+    login: string
+    id: number
+  }
+  // ...
+}
+```
+
+### Provider-Specific Types
+- Provider-specific types should be placed in implementation files
+- Utilize external API type definitions (e.g., @octokit/openapi-types)
+- Type conversions should be explicit within implementations
+
+```typescript
+// github.ts
+import type { components } from '@octokit/openapi-types'
+
+type GitHubDeployment = components['schemas']['deployment']
+type GitHubDeploymentStatus = components['schemas']['deployment-status']
+```
+
+## Implementation Patterns
+
+### Closure Pattern
+- Use closure pattern instead of classes
+- Encapsulate private state within scope
+- Only expose necessary functions
+
+```typescript
+export const createGitHubVCSProvider = (token?: string): VCSProvider => {
+  // private state
+  const octokit = new Octokit({ auth: token })
+
+  // public functions
+  return {
+    getDeployments,
+    getDeploymentStatus
+  }
+}
+```
+
+### Type Safety
+- Use type assertions carefully
+- Convert from unknown to specific types gradually
+- Define API response types explicitly
+
+## Testing Strategy
+
+### E2E Tests
+- Test using actual API
+- Proper permissions in CI environment are crucial
+- Test cases should consider non-existent data
+
+```typescript
+it('should fetch deployment with correct properties when exists', async () => {
+  const deployments = await provider.getDeployments(owner, repo)
+  if (!deployments.length) {
+    return
+  }
+  const deployment = deployments[0]
+  expect(deployment.provider).toBe('github')
+  expect(deployment.environment).toBeDefined()
+  // ...
+})
+```
+
+## CI/CD Configuration
+
+### GitHub Actions
+- 必要な権限を明示的に設定
+```yaml
+permissions:
+  contents: read
+  deployments: read
+```
+
+### Error Handling
+- Handle API errors appropriately
+- Maintain type safety during error handling
+- Provide appropriate debug information
+
+## Best Practices
+
+1. Interface Design
+   - Include only minimum required fields
+   - Separate provider-specific implementations
+   - Use consistent naming conventions
+
+2. Type Safety
+   - Use explicit type definitions
+   - Minimize type assertions
+   - Utilize API type definitions
+
+3. Testing
+   - Use real API for E2E tests
+   - Test edge cases
+   - Configure CI environment permissions
+
+4. Error Handling
+   - Define appropriate error types
+   - Provide debug information
+   - Maintain type safety
+
+## References
+- [GitHub Deployment API](https://docs.github.com/ja/rest/deployments)
+- [Octokit Types](https://github.com/octokit/openapi-types.ts)
