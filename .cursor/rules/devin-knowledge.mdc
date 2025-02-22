@@ -1,19 +1,26 @@
 ---
-description: Devin の実装パターンとベストプラクティス
+description: Implementation patterns and best practices for Devin
 globs: */**/github.ts;*/**/interface.ts
 ---
+
+# Documentation Rules
+
+## .cursor/rules Guidelines
+1. When knowledge is updated, developers must update `.cursor/rules` to reflect those changes
+2. If documentation is duplicated, developers must update `.cursor/rules` documents
+3. All `.cursor/rules` documentation must be written in English
 
 # Devin Implementation Patterns and Best Practices
 
 ## Type Definition Strategy
 
 ### Generic Interface Design
-- 汎用的なインターフェースは最小限の必要なフィールドのみを含める
-- プロバイダー固有の実装詳細は個別のファイルに分離する
-- 日付関連のフィールドは一貫した命名規則を使用する（例：createdAt, updatedAt）
+- Generic interfaces should contain only the minimum required fields
+- Provider-specific implementation details should be separated into individual files
+- Date-related fields should use consistent naming conventions (e.g., createdAt, updatedAt)
 
 ```typescript
-// 良い例：最小限の汎用インターフェース
+// Good example: Minimal generic interface
 interface Deployment {
   provider: string
   environment: string
@@ -22,7 +29,7 @@ interface Deployment {
   updatedAt: string
 }
 
-// 避けるべき例：実装固有の詳細を含むインターフェース
+// Bad example: Interface with implementation-specific details
 interface Deployment {
   id: number          // 実装固有
   ref: string         // 実装固有
@@ -35,9 +42,9 @@ interface Deployment {
 ```
 
 ### Provider-Specific Types
-- プロバイダー固有の型は実装ファイルに配置
-- 外部APIの型定義を活用（例：@octokit/openapi-types）
-- 型変換は実装内で明示的に行う
+- Provider-specific types should be placed in implementation files
+- Utilize external API type definitions (e.g., @octokit/openapi-types)
+- Type conversions should be explicit within implementations
 
 ```typescript
 // github.ts
@@ -50,9 +57,9 @@ type GitHubDeploymentStatus = components['schemas']['deployment-status']
 ## Implementation Patterns
 
 ### Closure Pattern
-- クラスの代わりにクロージャーパターンを使用
-- プライベートな状態をスコープ内に閉じ込める
-- 必要な関数のみを公開
+- Use closure pattern instead of classes
+- Encapsulate private state within scope
+- Only expose necessary functions
 
 ```typescript
 export const createGitHubVCSProvider = (token?: string): VCSProvider => {
@@ -68,16 +75,16 @@ export const createGitHubVCSProvider = (token?: string): VCSProvider => {
 ```
 
 ### Type Safety
-- 型アサーションは慎重に使用
-- unknown から具体的な型への変換を段階的に行う
-- API レスポンスの型を明示的に定義
+- Use type assertions carefully
+- Convert from unknown to specific types gradually
+- Define API response types explicitly
 
 ## Testing Strategy
 
 ### E2E Tests
-- 実際のAPIを使用したテスト
-- CI環境での権限設定が重要
-- テストケースは存在しないデータも考慮
+- Test using actual API
+- Proper permissions in CI environment are crucial
+- Test cases should consider non-existent data
 
 ```typescript
 it('should fetch deployment with correct properties when exists', async () => {
@@ -103,31 +110,31 @@ permissions:
 ```
 
 ### Error Handling
-- API エラーは適切に処理
-- 型安全性を維持しながらエラーハンドリング
-- デバッグ情報を適切に提供
+- Handle API errors appropriately
+- Maintain type safety during error handling
+- Provide appropriate debug information
 
 ## Best Practices
 
-1. インターフェース設計
-   - 最小限の必要なフィールドのみを含める
-   - プロバイダー固有の実装は分離する
-   - 一貫した命名規則を使用する
+1. Interface Design
+   - Include only minimum required fields
+   - Separate provider-specific implementations
+   - Use consistent naming conventions
 
-2. 型安全性
-   - 明示的な型定義を使用
-   - 型アサーションは最小限に抑える
-   - API型定義を活用する
+2. Type Safety
+   - Use explicit type definitions
+   - Minimize type assertions
+   - Utilize API type definitions
 
-3. テスト
-   - 実際のAPIを使用したE2Eテスト
-   - エッジケースのテスト
-   - CI環境での権限設定
+3. Testing
+   - Use real API for E2E tests
+   - Test edge cases
+   - Configure CI environment permissions
 
-4. エラーハンドリング
-   - 適切なエラー型の定義
-   - デバッグ情報の提供
-   - 型安全性の維持
+4. Error Handling
+   - Define appropriate error types
+   - Provide debug information
+   - Maintain type safety
 
 ## References
 - [GitHub Deployment API](https://docs.github.com/ja/rest/deployments)
