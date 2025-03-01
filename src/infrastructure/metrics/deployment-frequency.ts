@@ -117,10 +117,9 @@ const calculateFrequencyValue = (
 
 /**
  * Get frequency unit based on period
- * @param period Period type
  * @returns Frequency unit
  */
-const getFrequencyUnit = (_period: Period): string => {
+const getFrequencyUnit = (): string => {
   return 'per_day' // We always return frequency per day
 }
 
