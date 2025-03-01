@@ -30,7 +30,7 @@ export const calculateDeploymentFrequency = (
   if (sortedDeployments.length === 0) {
     const now = new Date()
     const startDate = getPeriodStartDate(now, options.period)
-    
+
     return {
       value: 0,
       unit: getFrequencyUnit(options.period),
@@ -49,7 +49,8 @@ export const calculateDeploymentFrequency = (
 
   // Filter deployments within the period
   const deploymentsInPeriod = sortedDeployments.filter(
-    (d) => new Date(d.createdAt) >= startDate && new Date(d.createdAt) <= endDate
+    (d) =>
+      new Date(d.createdAt) >= startDate && new Date(d.createdAt) <= endDate
   )
 
   // Calculate frequency
@@ -78,7 +79,7 @@ export const calculateDeploymentFrequency = (
  */
 const getPeriodStartDate = (endDate: Date, period: Period): Date => {
   const startDate = new Date(endDate)
-  
+
   switch (period) {
     case 'day':
       startDate.setDate(startDate.getDate() - 1)
@@ -90,7 +91,7 @@ const getPeriodStartDate = (endDate: Date, period: Period): Date => {
       startDate.setMonth(startDate.getMonth() - 1)
       break
   }
-  
+
   return startDate
 }
 
@@ -100,7 +101,10 @@ const getPeriodStartDate = (endDate: Date, period: Period): Date => {
  * @param period Period type
  * @returns Frequency value
  */
-const calculateFrequencyValue = (totalDeployments: number, period: Period): number => {
+const calculateFrequencyValue = (
+  totalDeployments: number,
+  period: Period
+): number => {
   switch (period) {
     case 'day':
       return totalDeployments // deployments per day

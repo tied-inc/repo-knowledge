@@ -21,16 +21,16 @@ describe('Deployment Frequency', () => {
   const now = new Date()
   const yesterday = new Date(now)
   yesterday.setDate(yesterday.getDate() - 1)
-  
+
   const twoDaysAgo = new Date(now)
   twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
-  
+
   const lastWeek = new Date(now)
   lastWeek.setDate(lastWeek.getDate() - 7)
-  
+
   const twoWeeksAgo = new Date(now)
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
-  
+
   const lastMonth = new Date(now)
   lastMonth.setMonth(lastMonth.getMonth() - 1)
 
@@ -109,10 +109,8 @@ describe('Deployment Frequency', () => {
       // Create deployments from 2 months ago
       const twoMonthsAgo = new Date(now)
       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
-      
-      const oldDeployments = [
-        createMockDeployment(twoMonthsAgo.toISOString())
-      ]
+
+      const oldDeployments = [createMockDeployment(twoMonthsAgo.toISOString())]
 
       const result = calculateDeploymentFrequency(oldDeployments, {
         period: 'week'
