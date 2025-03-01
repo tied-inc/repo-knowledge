@@ -1,4 +1,12 @@
 // Generic metrics interfaces
+export interface Deployment {
+  provider: string
+  environment: string
+  sha: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface MetricsProvider {
   calculate: () => Promise<MetricsResult>
 }

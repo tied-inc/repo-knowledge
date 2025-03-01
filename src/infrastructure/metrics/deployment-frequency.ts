@@ -1,5 +1,5 @@
-import type { Deployment } from '../vcs/interface.js'
 import type {
+  Deployment,
   DeploymentFrequencyOptions,
   DeploymentFrequencyProvider,
   DeploymentFrequencyResult,
@@ -112,6 +112,8 @@ const calculateFrequencyValue = (
       return totalDeployments / 7 // average deployments per day over a week
     case 'month':
       return totalDeployments / 30 // average deployments per day over a month
+    default:
+      return totalDeployments // default to daily frequency
   }
 }
 
