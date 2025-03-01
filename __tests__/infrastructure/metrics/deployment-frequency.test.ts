@@ -1,8 +1,8 @@
 import {
   calculateDeploymentFrequency,
   createDeploymentFrequencyProvider
-} from '../../../src/infrastructure/metrics/deployment-frequency.js'
-import type { Deployment } from '../../../src/infrastructure/vcs/interface.js'
+} from '../../../src/infrastructure/metrics/deployment-frequency'
+import type { Deployment } from '../../../src/infrastructure/vcs/interface'
 
 describe('Deployment Frequency', () => {
   // Mock deployment data
