@@ -33,7 +33,7 @@ export const calculateDeploymentFrequency = (
 
     return {
       value: 0,
-      unit: getFrequencyUnit(options.period),
+      unit: getFrequencyUnit(),
       period: options.period,
       environment: options.environment,
       totalDeployments: 0,
@@ -59,7 +59,7 @@ export const calculateDeploymentFrequency = (
 
   return {
     value: frequency,
-    unit: getFrequencyUnit(options.period),
+    unit: getFrequencyUnit(),
     period: options.period,
     environment: options.environment,
     totalDeployments,
