@@ -1,5 +1,9 @@
 import type { Deployment } from '../vcs/interface.js'
-import type { DeploymentFrequencyOptions, DeploymentFrequencyProvider, DeploymentFrequencyResult } from './interface.js'
+import type {
+  DeploymentFrequencyOptions,
+  DeploymentFrequencyProvider,
+  DeploymentFrequencyResult
+} from './interface.js'
 
 /**
  * Calculate deployment frequency from deployment data
