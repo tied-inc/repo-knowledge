@@ -4,7 +4,7 @@ import type {
   DeploymentFrequencyProvider,
   DeploymentFrequencyResult,
   Period
-} from './interface.js'
+} from './interface'
 
 /**
  * Calculate deployment frequency from deployment data
